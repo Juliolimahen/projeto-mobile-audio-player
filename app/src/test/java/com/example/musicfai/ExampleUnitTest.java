@@ -1,4 +1,4 @@
-package com.example.jmusicplayer;
+package com.example.musicfai;
 
 import org.junit.Test;
 
