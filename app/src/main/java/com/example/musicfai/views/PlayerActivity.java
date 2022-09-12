@@ -1,21 +1,23 @@
-package com.example.musicfai;
+package com.example.musicfai.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.musicfai.models.MusicaModel;
+import com.example.musicfai.R;
 import com.example.musicfai.models.MediaPlayerModel;
+import com.example.musicfai.models.MusicaModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -102,6 +104,17 @@ public class PlayerActivity extends AppCompatActivity {
         pausePlay.setOnClickListener(v -> pausePlayMusica());
         nextBtn.setOnClickListener(v -> nextMusica());
         previousBtn.setOnClickListener(v -> previousMusica());
+
+        Uri artworkUri;
+        artworkUri = Uri.parse(currentSong.getArtworkUristr().toString());
+
+        if (artworkUri != null) {
+            musicaIco.setImageURI(artworkUri);
+
+            if (musicaIco.getDrawable() == null) {
+                musicaIco.setImageResource(R.drawable.sound_button);
+            }
+        }
         playMusica();
     }
 
@@ -133,7 +146,6 @@ public class PlayerActivity extends AppCompatActivity {
         MediaPlayerModel.setCurrentIndex(MediaPlayerModel.getCurrentIndex() + 1);
         mediaPlayer.reset();
         setMusicarPlayer();
-
     }
 
     private void previousMusica() {

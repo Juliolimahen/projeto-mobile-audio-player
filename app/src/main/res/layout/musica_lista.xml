@@ -7,7 +7,7 @@
     android:layout_marginTop="5dp"
 
     android:layout_marginRight="5dp"
-    android:background="@color/black"
+    android:background="@color/black_01"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:textColor="#F8F8FF">

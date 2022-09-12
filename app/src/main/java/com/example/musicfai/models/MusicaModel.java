@@ -5,35 +5,37 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
-public class MusicaModel implements Serializable {
+public class MusicaModel implements Serializable{
     private String path;
     private String title;
     private String duration;
-    private String Artista;
-    private String Album ;
+    private String artista;
+    private String album;
+    private transient Uri uri;
+    private transient Uri artworkUri;
+    private String artworkUristr;
+
+    public MusicaModel(String path, String title, String duration, String artista, String album, Uri uri, Uri artworkUri) {
+        this.path = path;
+        this.title = title;
+        this.duration = duration;
+        this.artista = artista;
+        this.album = album;
+        this.uri = uri;
+        this.artworkUri = artworkUri;
+        this.artworkUristr=artworkUri.toString();
+    }
 
     public MusicaModel(String path, String title, String duration, String artista, String album) {
         this.path = path;
         this.title = title;
         this.duration = duration;
-        Artista = artista;
-        Album = album;
+        this.artista = artista;
+        this.album = album;
     }
 
-    public String getArtista() {
-        return Artista;
-    }
-
-    public void setArtista(String artista) {
-        Artista = artista;
-    }
-
-    public String getAlbum() {
-        return Album;
-    }
-
-    public void setAlbum(String album) {
-        Album = album;
+    public String getArtworkUristr() {
+        return artworkUristr;
     }
 
     public String getPath() {
@@ -58,5 +60,37 @@ public class MusicaModel implements Serializable {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getArtista() {
+        return artista;
+    }
+
+    public void setArtista(String artista) {
+        this.artista = artista;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
+
+    public Uri getArtworkUri() {
+        return artworkUri;
+    }
+
+    public void setArtworkUri(Uri artworkUri) {
+        this.artworkUri = artworkUri;
     }
 }
