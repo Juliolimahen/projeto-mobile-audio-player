@@ -5,14 +5,14 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
-public class AudioModel implements Serializable {
+public class MusicaModel implements Serializable {
     private String path;
     private String title;
     private String duration;
     private String Artista;
     private String Album ;
 
-    public AudioModel(String path, String title, String duration, String artista, String album) {
+    public MusicaModel(String path, String title, String duration, String artista, String album) {
         this.path = path;
         this.title = title;
         this.duration = duration;

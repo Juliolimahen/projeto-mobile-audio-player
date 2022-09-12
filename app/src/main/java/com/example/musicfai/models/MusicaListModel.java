@@ -3,10 +3,8 @@ package com.example.musicfai.models;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,54 +12,50 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import androidx.annotation.NonNull;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.musicfai.MusicPlayerActivity;
+import com.example.musicfai.PlayerActivity;
 import com.example.musicfai.R;
 
-public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder>{
+public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHolder> {
 
-    private ArrayList<AudioModel> songsList;
+    private ArrayList<MusicaModel> songsList;
     private Context context;
 
-    public MusicListAdapter(ArrayList<AudioModel> songsList, Context context) {
+    public MusicaListModel(ArrayList<MusicaModel> songsList, Context context) {
         this.songsList = songsList;
         this.context = context;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.musica_lista,parent,false);
-        return new MusicListAdapter.ViewHolder(view);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.musica_lista, parent, false);
+        return new MusicaListModel.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MusicListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        AudioModel songData = songsList.get(position);
+    public void onBindViewHolder(MusicaListModel.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        MusicaModel songData = songsList.get(position);
         holder.titleTextView.setText(songData.getTitle());
 
-        if(MyMediaPlayer.currentIndex==position){
-            holder.titleTextView.setTextColor(Color.parseColor("#F00000"));
-        }else{
-            holder.titleTextView.setTextColor(Color.parseColor("#000000"));
+        if (MediaPlayerModel.getCurrentIndex() == position) {
+            holder.titleTextView.setTextColor(Color.parseColor("#00FFFF"));
+        } else {
+            holder.titleTextView.setTextColor(Color.parseColor("#FFFFFF"));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                MyMediaPlayer.getInstance().reset();
-                MyMediaPlayer.currentIndex = position;
-                Intent intent = new Intent(context, MusicPlayerActivity.class);
-                intent.putExtra("LIST",songsList);
+                MediaPlayerModel.getInstance().reset();
+                MediaPlayerModel.setCurrentIndex(position);
+                Intent intent = new Intent(context, PlayerActivity.class);
+                intent.putExtra("LIST", songsList);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-
             }
         });
-
     }
 
     @Override
@@ -70,10 +64,10 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         ImageView iconImageView;
+
         public ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.music_title_text);
@@ -81,10 +75,14 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }
     }
 
-    private byte [] getAlbum(String uri){
+    private byte[] getAlbum() {
+        return getAlbum();
+    }
+
+    private byte[] getAlbum(String uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
-        byte [] art = retriever.getEmbeddedPicture();
+        byte[] art = retriever.getEmbeddedPicture();
         retriever.release();
         return art;
     }

@@ -5,13 +5,12 @@
     <application
         android:allowBackup="true"
         android:label="Music Fai"
-        android:logo="@drawable/logo"
         android:icon="@drawable/icon"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicFai">
-        <activity android:name=".MusicPlayerActivity" android:screenOrientation="portrait">
+        <activity android:name=".PlayerActivity" android:screenOrientation="portrait">
         </activity>
         <activity android:name=".MainActivity"
             android:exported="true"
