@@ -1,5 +1,7 @@
 package com.example.musicfai.views;
 
+import static com.example.musicfai.models.MediaPlayerModel.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.media.MediaPlayer;
@@ -12,8 +14,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.musicfai.R;
-import com.example.musicfai.models.MediaPlayerModel;
 import com.example.musicfai.models.MusicaModel;
+import com.example.musicfai.services.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,12 +23,19 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerActivity extends AppCompatActivity {
 
-    private TextView titulo, tempoAtual, tempoTotal, musicaArtista, musicaAlbum;
+    private TextView titulo;
+    private TextView tempoAtual;
+    private TextView tempoTotal;
+    private TextView musicaArtista;
+    private TextView musicaAlbum;
     private SeekBar seekBar;
-    private ImageView pausePlay, nextBtn, previousBtn, musicaIco;
+    private ImageView pausePlay;
+    private ImageView nextBtn;
+    private ImageView previousBtn;
+    private ImageView musicaIco;
     private ArrayList<MusicaModel> musicasList;
     private MusicaModel currentSong;
-    private MediaPlayer mediaPlayer = MediaPlayerModel.getInstance();
+    private MediaPlayer mediaPlayer = getInstance();
     int x = 0;
 
     @Override
@@ -34,29 +43,19 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-        pausePlay = findViewById(R.id.pause_play);
-        nextBtn = findViewById(R.id.next);
-        previousBtn = findViewById(R.id.previous);
-        tempoAtual = findViewById(R.id.tempo_atual);
-        tempoTotal = findViewById(R.id.tempo_total);
-        titulo = findViewById(R.id.musica_titulo);
-        seekBar = findViewById(R.id.seek_bar);
-        musicaIco = findViewById(R.id.musica_icon);
-        musicaArtista = findViewById(R.id.musica_artista);
-        musicaAlbum = findViewById(R.id.musica_album);
-
+        inicializarComponetes();
         titulo.setSelected(true);
 
         musicasList = (ArrayList<MusicaModel>) getIntent().getSerializableExtra("LIST");
 
-        setMusicarPlayer();
+        inicializarMusicarPlayer();
 
         PlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mediaPlayer != null) {
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
-                    tempoAtual.setText(converterEmMilisegundos(mediaPlayer.getCurrentPosition() + ""));
+                    tempoAtual.setText((Utils.Milisegundos.converterEmMilisegundos(mediaPlayer.getCurrentPosition() + "")));
 
                     if (mediaPlayer.isPlaying()) {
                         pausePlay.setImageResource(R.drawable.ic_pause);
@@ -65,12 +64,10 @@ public class PlayerActivity extends AppCompatActivity {
                         pausePlay.setImageResource(R.drawable.ic_play);
                         musicaIco.setRotation(0);
                     }
-
                 }
                 new Handler().postDelayed(this, 100);
             }
         });
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -81,32 +78,42 @@ public class PlayerActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
 
-    private void setMusicarPlayer() {
-        currentSong = musicasList.get(MediaPlayerModel.getCurrentIndex());
+    private void inicializarComponetes() {
+        pausePlay = findViewById(R.id.pause_play);
+        nextBtn = findViewById(R.id.next);
+        previousBtn = findViewById(R.id.previous);
+        tempoAtual = findViewById(R.id.tempo_atual);
+        tempoTotal = findViewById(R.id.tempo_total);
+        titulo = findViewById(R.id.musica_titulo);
+        seekBar = findViewById(R.id.seek_bar);
+        musicaIco = findViewById(R.id.musica_icon);
+        musicaArtista = findViewById(R.id.musica_artista);
+        musicaAlbum = findViewById(R.id.musica_album);
+    }
+
+    private void inicializarMusicarPlayer() {
+        currentSong = musicasList.get(getCurrentIndex());
         titulo.setText(currentSong.getTitle());
-        if (currentSong.getArtista().equalsIgnoreCase(null))
+        if (currentSong.getArtista().isEmpty())
             musicaArtista.setText("Artista");
         musicaArtista.setText(currentSong.getArtista());
-        if (currentSong.getAlbum().equalsIgnoreCase(null))
+        if (currentSong.getAlbum().isEmpty())
             musicaArtista.setText("Album");
         musicaAlbum.setText(currentSong.getAlbum());
-        tempoTotal.setText(converterEmMilisegundos(currentSong.getDuration()));
+        tempoTotal.setText(Utils.Milisegundos.converterEmMilisegundos((currentSong.getDuration())));
         pausePlay.setOnClickListener(v -> pausePlayMusica());
         nextBtn.setOnClickListener(v -> nextMusica());
         previousBtn.setOnClickListener(v -> previousMusica());
 
-        Uri artworkUri;
-        artworkUri = Uri.parse(currentSong.getArtworkUristr().toString());
+        Uri artworkUri = Uri.parse(currentSong.getArtworkUristr().toString());
 
         if (artworkUri != null) {
             musicaIco.setImageURI(artworkUri);
@@ -116,13 +123,6 @@ public class PlayerActivity extends AppCompatActivity {
             }
         }
         playMusica();
-    }
-
-    public static String converterEmMilisegundos(String duration) {
-        Long millis = Long.parseLong(duration);
-        return String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
     }
 
     private void playMusica() {
@@ -141,25 +141,36 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void nextMusica() {
 
-        if (MediaPlayerModel.getCurrentIndex() == musicasList.size() - 1)
+        if (getCurrentIndex() == musicasList.size() - 1)
             return;
-        MediaPlayerModel.setCurrentIndex(MediaPlayerModel.getCurrentIndex() + 1);
+        setCurrentIndex(getCurrentIndex() + 1);
         mediaPlayer.reset();
-        setMusicarPlayer();
+        inicializarMusicarPlayer();
     }
 
     private void previousMusica() {
-        if (MediaPlayerModel.getCurrentIndex() == 0)
+        if (getCurrentIndex() == 0) {
             return;
-        MediaPlayerModel.setCurrentIndex(MediaPlayerModel.getCurrentIndex() - 1);
+        }
+        setCurrentIndex(getCurrentIndex() - 1);
         mediaPlayer.reset();
-        setMusicarPlayer();
+        inicializarMusicarPlayer();
     }
 
     private void pausePlayMusica() {
-        if (mediaPlayer.isPlaying())
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-        else
+        } else {
             mediaPlayer.start();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }

@@ -20,15 +20,16 @@ import android.widget.Toast;
 import com.example.musicfai.R;
 import com.example.musicfai.models.MusicaModel;
 import com.example.musicfai.models.MusicaListModel;
+import com.example.musicfai.services.IPermissao;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPermissao {
 
     private RecyclerView listaDeMusicas;
-    private ArrayList<MusicaModel> musicasList = new ArrayList<>();
+    private final ArrayList<MusicaModel> musicasList = new ArrayList<>();
     private TextView ListaVazia;
     private MusicaListModel musicaListModel;
 
@@ -37,22 +38,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listaDeMusicas = findViewById(R.id.recycler_view);
-        ListaVazia = findViewById(R.id.sem_musica_txt);
+        inicializarCompenentes();
 
         if (checarPermissao() == false) {
             solicitarPermissao();
-            return;
+            onResume();
         } else {
             bootstrap();
         }
     }
 
+public void inicializarCompenentes(){
+    listaDeMusicas = findViewById(R.id.recycler_view);
+    ListaVazia = findViewById(R.id.sem_musica_txt);
+}
     public void bootstrap() {
 
-        List<MusicaModel> musicas = new ArrayList<>();
+        List<MusicaModel> musicas;
+        musicas = new ArrayList<>();
 
-        String[] projection = new String[]{
+        String[] projection;
+        projection = new String[]{
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.TITLE,
@@ -62,10 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Audio.Media.ALBUM_ID,
         };
 
-
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
-        //cache cursos indices
+        //cache curso indices
         int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
         int pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
         int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
@@ -101,29 +106,25 @@ public class MainActivity extends AppCompatActivity {
                 musicas.add(musica);
         }
         musicasList.addAll(musicas);
-        if (musicasList.size() == 0) {
-            ListaVazia.setVisibility(View.VISIBLE);
-        } else {
-            //recyclerview
+        if (musicasList.size() == 0) ListaVazia.setVisibility(View.VISIBLE);
+        else {
             listaDeMusicas.setLayoutManager(new LinearLayoutManager(this));
             listaDeMusicas.setAdapter(new MusicaListModel(musicasList, getApplicationContext()));
         }
     }
 
-    private void solicitarPermissao() {
+    public void solicitarPermissao() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toast.makeText(MainActivity.this, "É necessario liberar a permissão de armzenamento. Por favar faça isso nas configurações!", Toast.LENGTH_SHORT).show();
-        } else
+            Toast.makeText(MainActivity.this, "É necessario liberar a permissão de armzenamento. " +
+                    "Por favor faça isso nas configurações!", Toast.LENGTH_SHORT).show();
+        } else {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+        }
     }
 
-    private boolean checarPermissao() {
+    public boolean checarPermissao() {
         int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override

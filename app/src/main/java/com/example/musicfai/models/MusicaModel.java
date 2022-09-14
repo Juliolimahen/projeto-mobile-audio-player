@@ -26,6 +26,8 @@ public class MusicaModel implements Serializable{
         this.artworkUristr=artworkUri.toString();
     }
 
+    //Sobrecarga Teste
+    //teste serializacao
     public MusicaModel(String path, String title, String duration, String artista, String album) {
         this.path = path;
         this.title = title;
