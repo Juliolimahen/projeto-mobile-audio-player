@@ -42,17 +42,17 @@ public class MainActivity extends AppCompatActivity implements IPermissao {
 
         if (checarPermissao() == false) {
             solicitarPermissao();
-            onResume();
         } else {
             bootstrap();
         }
     }
 
-public void inicializarCompenentes(){
-    listaDeMusicas = findViewById(R.id.recycler_view);
-    ListaVazia = findViewById(R.id.sem_musica_txt);
-}
-    public void bootstrap() {
+    private void inicializarCompenentes() {
+        listaDeMusicas = findViewById(R.id.recycler_view);
+        ListaVazia = findViewById(R.id.sem_musica_txt);
+    }
+
+    private void bootstrap() {
 
         List<MusicaModel> musicas;
         musicas = new ArrayList<>();

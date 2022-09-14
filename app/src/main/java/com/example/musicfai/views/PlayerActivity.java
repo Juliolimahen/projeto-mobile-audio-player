@@ -19,9 +19,8 @@ import com.example.musicfai.services.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     private TextView titulo;
     private TextView tempoAtual;
@@ -34,7 +33,7 @@ public class PlayerActivity extends AppCompatActivity {
     private ImageView previousBtn;
     private ImageView musicaIco;
     private ArrayList<MusicaModel> musicasList;
-    private MusicaModel currentSong;
+    private MusicaModel musicaAtual;
     private MediaPlayer mediaPlayer = getInstance();
     int x = 0;
 
@@ -42,14 +41,13 @@ public class PlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
         inicializarComponetes();
         titulo.setSelected(true);
-
         musicasList = (ArrayList<MusicaModel>) getIntent().getSerializableExtra("LIST");
 
         inicializarMusicarPlayer();
 
+        mediaPlayer.setOnCompletionListener(this);
         PlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -62,13 +60,15 @@ public class PlayerActivity extends AppCompatActivity {
                         musicaIco.setRotation(x++);
                     } else {
                         pausePlay.setImageResource(R.drawable.ic_play);
-                        musicaIco.setRotation(0);
+                        int j = (int) musicaIco.getRotation();
                     }
                 }
+
                 new Handler().postDelayed(this, 100);
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (mediaPlayer != null && fromUser) {
@@ -100,20 +100,20 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void inicializarMusicarPlayer() {
-        currentSong = musicasList.get(getCurrentIndex());
-        titulo.setText(currentSong.getTitle());
-        if (currentSong.getArtista().isEmpty())
+        musicaAtual = musicasList.get(getCurrentIndex());
+        titulo.setText(musicaAtual.getTitle());
+        if (musicaAtual.getArtista().isEmpty())
             musicaArtista.setText("Artista");
-        musicaArtista.setText(currentSong.getArtista());
-        if (currentSong.getAlbum().isEmpty())
+        musicaArtista.setText(musicaAtual.getArtista());
+        if (musicaAtual.getAlbum().isEmpty())
             musicaArtista.setText("Album");
-        musicaAlbum.setText(currentSong.getAlbum());
-        tempoTotal.setText(Utils.Milisegundos.converterEmMilisegundos((currentSong.getDuration())));
+        musicaAlbum.setText(musicaAtual.getAlbum());
+        tempoTotal.setText(Utils.Milisegundos.converterEmMilisegundos((musicaAtual.getDuration())));
         pausePlay.setOnClickListener(v -> pausePlayMusica());
         nextBtn.setOnClickListener(v -> nextMusica());
         previousBtn.setOnClickListener(v -> previousMusica());
 
-        Uri artworkUri = Uri.parse(currentSong.getArtworkUristr().toString());
+        Uri artworkUri = Uri.parse(musicaAtual.getArtworkUristr().toString());
 
         if (artworkUri != null) {
             musicaIco.setImageURI(artworkUri);
@@ -129,7 +129,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         mediaPlayer.reset();
         try {
-            mediaPlayer.setDataSource(currentSong.getPath());
+            mediaPlayer.setDataSource(musicaAtual.getPath());
             mediaPlayer.prepare();
             mediaPlayer.start();
             seekBar.setProgress(0);
@@ -144,6 +144,7 @@ public class PlayerActivity extends AppCompatActivity {
         if (getCurrentIndex() == musicasList.size() - 1)
             return;
         setCurrentIndex(getCurrentIndex() + 1);
+        mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.reset();
         inicializarMusicarPlayer();
     }
@@ -153,6 +154,7 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
         setCurrentIndex(getCurrentIndex() - 1);
+        mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.reset();
         inicializarMusicarPlayer();
     }
@@ -160,17 +162,21 @@ public class PlayerActivity extends AppCompatActivity {
     private void pausePlayMusica() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
+            pausePlay.setImageResource(R.drawable.ic_play);
+            mediaPlayer.setOnCompletionListener(this);
         } else {
+            mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.start();
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        nextMusica();
         if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
         }
+        setCurrentIndex(getCurrentIndex() - 1);
     }
 }

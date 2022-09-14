@@ -5,13 +5,14 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
-public class MusicaModel implements Serializable{
+public class MusicaModel implements Serializable {
     private String path;
     private String title;
     private String duration;
     private String artista;
     private String album;
     private transient Uri uri;
+    private String uriStr;
     private transient Uri artworkUri;
     private String artworkUristr;
 
@@ -23,7 +24,14 @@ public class MusicaModel implements Serializable{
         this.album = album;
         this.uri = uri;
         this.artworkUri = artworkUri;
-        this.artworkUristr=artworkUri.toString();
+        //Tornar serializavel
+        this.artworkUristr = artworkUri.toString();
+        //Tornar serializavel
+        this.uriStr = uri.toString();
+    }
+
+    public String getUriStr() {
+        return uriStr;
     }
 
     //Sobrecarga Teste

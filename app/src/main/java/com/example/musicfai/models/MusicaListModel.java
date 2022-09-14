@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,12 +48,12 @@ public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHo
 
         Uri artworkUri = songData.getArtworkUri();
 
-        if (artworkUri !=null ){
+        if (artworkUri != null) {
             holder.iconImageView.setImageURI(artworkUri);
 
-           if (holder.iconImageView.getDrawable()== null){
+            if (holder.iconImageView.getDrawable() == null) {
                 holder.iconImageView.setImageResource(R.drawable.sound_button);
-           }
+            }
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
