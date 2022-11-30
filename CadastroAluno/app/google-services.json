@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "497055624284",
+    "project_id": "cadastroalunos-43151",
+    "storage_bucket": "cadastroalunos-43151.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497055624284:android:81eac2db6b57b8faa24a99",
+        "android_client_info": {
+          "package_name": "com.example.cadastroaluno"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497055624284-7e7nkem11lb4jv00ktngg5lrue1isdgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVsD01qyDTOIbDSsloY3cQFKDEUd6yWYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497055624284-7e7nkem11lb4jv00ktngg5lrue1isdgc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

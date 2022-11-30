@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,12 +21,11 @@ import com.example.musicfai.R;
 
 public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHolder> {
 
-    private ArrayList<MusicaModel> songsList;
+    private ArrayList<MusicaModel> listaDeMusicas;
     private transient Context context;
 
-
-    public MusicaListModel(ArrayList<MusicaModel> songsList, Context context) {
-        this.songsList = songsList;
+    public MusicaListModel(ArrayList<MusicaModel> listaDeMusicas, Context context) {
+        this.listaDeMusicas = listaDeMusicas;
         this.context = context;
     }
 
@@ -37,7 +37,7 @@ public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHo
 
     @Override
     public void onBindViewHolder(MusicaListModel.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        MusicaModel songData = songsList.get(position);
+        MusicaModel songData = listaDeMusicas.get(position);
         holder.titleTextView.setText(songData.getTitle());
 
         if (MediaPlayerModel.getCurrentIndex() == position) {
@@ -48,12 +48,12 @@ public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHo
 
         Uri artworkUri = songData.getArtworkUri();
 
-        if (artworkUri !=null ){
+        if (artworkUri != null) {
             holder.iconImageView.setImageURI(artworkUri);
 
-           if (holder.iconImageView.getDrawable()== null){
+            if (holder.iconImageView.getDrawable() == null) {
                 holder.iconImageView.setImageResource(R.drawable.sound_button);
-           }
+            }
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +61,7 @@ public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHo
                 MediaPlayerModel.getInstance().reset();
                 MediaPlayerModel.setCurrentIndex(position);
                 Intent intent = new Intent(context, PlayerActivity.class);
-                Intent list = intent.putExtra("LIST", songsList);
+                Intent list = intent.putExtra("LIST", listaDeMusicas);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
@@ -70,9 +70,8 @@ public class MusicaListModel extends RecyclerView.Adapter<MusicaListModel.ViewHo
 
     @Override
     public int getItemCount() {
-        return songsList.size();
+        return listaDeMusicas.size();
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;

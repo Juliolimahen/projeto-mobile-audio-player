@@ -6,7 +6,7 @@ public class AlbumModel {
     private String path;
     private String title;
     private String artista;
-    private String album ;
+    private String album;
     private Uri uri;
 
     public AlbumModel(String path, String title, String artista, String album, Uri uri) {
@@ -14,7 +14,7 @@ public class AlbumModel {
         this.title = title;
         this.artista = artista;
         this.album = album;
-        this.uri=uri;
+        this.uri = uri;
     }
 
     public Uri getUri() {

@@ -15,6 +15,7 @@
         android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:text="Músicas"
+        android:layout_margin="10dp"
         android:textColor="@color/white"
         android:textSize="20dp"
         android:textStyle="italic" />
